@@ -22,7 +22,7 @@ import systems.kinau.fishingbot.network.protocol.play.PacketOutUseItem;
 public class CosmicSkyModule extends Module implements Listener {
 
     @Getter private boolean joinedIslands = false;
-    @Getter private boolean joinedStiansIsland = false;
+    @Getter private boolean joinedCorrectIsland = false;
     @Getter private boolean arrivedAtPortal = false;
     @Getter private Thread currentThread;
     @Getter private int fishermanEid;
@@ -38,13 +38,9 @@ public class CosmicSkyModule extends Module implements Listener {
     private void movingToPortal() {
         currentThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
-                if (FishingBot.getInstance().getPlayer().getZ() < -6406.2) {
+                if (FishingBot.getInstance().getPlayer().getZ() > 1847.3) {
                     Player player = FishingBot.getInstance().getPlayer();
-                    player.setZ(player.getZ() + 0.15);
-                    FishingBot.getInstance().getNet().sendPacket(new PacketOutPosition(player.getX(), player.getY(), player.getZ(), true));
-                } else if (FishingBot.getInstance().getPlayer().getX() > -494735.5){
-                    Player player = FishingBot.getInstance().getPlayer();
-                    player.setX(player.getX() - 0.15);
+                    player.setZ(player.getZ() - 0.15);
                     FishingBot.getInstance().getNet().sendPacket(new PacketOutPosition(player.getX(), player.getY(), player.getZ(), true));
                 } else {
                     FishingBot.getLog().info("Arrived at portal!");
@@ -54,7 +50,7 @@ public class CosmicSkyModule extends Module implements Listener {
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    break;
                 }
             }
         });
@@ -64,17 +60,16 @@ public class CosmicSkyModule extends Module implements Listener {
     private void movingToFisherMan() {
         currentThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
-                System.out.println(FishingBot.getInstance().getPlayer().getX() + "/" + FishingBot.getInstance().getPlayer().getY() + "/" + FishingBot.getInstance().getPlayer().getZ());
                 if (FishingBot.getInstance().getPlayer().getY() > 228.0625) {
                     Player player = FishingBot.getInstance().getPlayer();
                     player.setY(player.getY() - 0.1);
                     player.setX(player.getX() + 0.15);
                     FishingBot.getInstance().getNet().sendPacket(new PacketOutPosition(player.getX(), player.getY(), player.getZ(), false));
                 } else {
-                    new Replayer("walkToFisherman.packets").replay();
+                    new Replayer("paths/walkToFisherman.packets").replay();
                     FishingBot.getInstance().getNet().sendPacket(new PacketOutUseEntity(fishermanEid, 0, 0, 0, 0, 0));
                     FishingBot.getInstance().getNet().sendPacket(new PacketOutUseEntity(fishermanEid, 2, -0.4F, 0.79F, -0.14F, 0));
-                    new Replayer("walkToLake.packets").replay();
+                    new Replayer("paths/" + FishingBot.getInstance().getConfig().getPathToLake()).replay();
                     FishingBot.getInstance().setFishingModule(new FishingModule());
                     FishingBot.getInstance().getFishingModule().enable();
                     FishingBot.getInstance().getFishingModule().setTrackingNextFishingId(true);
@@ -119,7 +114,7 @@ public class CosmicSkyModule extends Module implements Listener {
     public void onDifficultySet(DifficultySetEvent event) {
         if(arrivedAtPortal)
             return;
-        if (isJoinedStiansIsland()) {
+        if (isJoinedCorrectIsland()) {
             new Thread(() -> {
                 try {
                     Thread.sleep(500);
@@ -138,10 +133,10 @@ public class CosmicSkyModule extends Module implements Listener {
                     e.printStackTrace();
                 }
                 FishingBot.getLog().info("WARP to island");
-                FishingBot.getInstance().getNet().sendPacket(new PacketOutChat("/is warp stian2004"));
-                joinedStiansIsland = true;
+                FishingBot.getInstance().getNet().sendPacket(new PacketOutChat("/is warp MissGladiator"));
+                joinedCorrectIsland = true;
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(15000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -159,8 +154,8 @@ public class CosmicSkyModule extends Module implements Listener {
 
     @EventHandler
     public void onSpawnPlayer(SpawnPlayerEvent event) {
-        if(!isArrivedAtPortal())
-            return;
+//        if(!isArrivedAtPortal())
+//            return;
         if(event.getX() == 37.5 && event.getY() == 230 && event.getZ() == 22.5)
             fishermanEid = event.getEID();
     }

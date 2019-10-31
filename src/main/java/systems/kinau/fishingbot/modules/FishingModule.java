@@ -17,7 +17,6 @@ import systems.kinau.fishingbot.event.play.UpdateSlotEvent;
 import systems.kinau.fishingbot.fishing.AnnounceType;
 import systems.kinau.fishingbot.network.protocol.Packet;
 import systems.kinau.fishingbot.network.protocol.ProtocolConstants;
-import systems.kinau.fishingbot.network.protocol.play.PacketOutChat;
 import systems.kinau.fishingbot.network.protocol.play.PacketOutUseItem;
 import systems.kinau.fishingbot.network.utils.ByteArrayDataInputWrapper;
 import systems.kinau.fishingbot.network.utils.Item;
@@ -104,26 +103,6 @@ public class FishingModule extends Module implements Runnable, Listener {
 
         //Clear mem
         getPossibleCaughtItems().clear();
-
-        //Print to console (based on announcetype)
-        logItem(currentMax,
-                FishingBot.getInstance().getConfig().getAnnounceTypeConsole(),
-                FishingBot.getLog()::info,
-                FishingBot.getLog()::info);
-
-        //Print in mc chat (based on announcetype)
-        logItem(currentMax,
-                FishingBot.getInstance().getConfig().getAnnounceTypeChat(),
-                (String str) -> FishingBot.getInstance().getNet().sendPacket(new PacketOutChat(FishingBot.PREFIX + str)),
-                (String str) -> {
-                    // Delay the enchant messages to arrive after the item announcement
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    FishingBot.getInstance().getNet().sendPacket(new PacketOutChat(str));
-                });
     }
 
 
@@ -340,7 +319,7 @@ public class FishingModule extends Module implements Runnable, Listener {
     @Override
     public void run() {
         while (true) {
-            if(System.currentTimeMillis() - getLastFish() > 60000) {
+            if(System.currentTimeMillis() - getLastFish() > 10000) {
                 setLastFish(System.currentTimeMillis());
                 setCurrentBobber(-1);
                 setTrackingNextEntityMeta(false);

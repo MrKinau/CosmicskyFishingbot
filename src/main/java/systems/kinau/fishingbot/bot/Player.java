@@ -15,9 +15,7 @@ import systems.kinau.fishingbot.event.play.PosLookChangeEvent;
 import systems.kinau.fishingbot.event.play.SetHeldItemEvent;
 import systems.kinau.fishingbot.event.play.UpdateExperienceEvent;
 import systems.kinau.fishingbot.event.play.UpdateSlotEvent;
-import systems.kinau.fishingbot.fishing.AnnounceType;
 import systems.kinau.fishingbot.network.protocol.ProtocolConstants;
-import systems.kinau.fishingbot.network.protocol.play.PacketOutChat;
 import systems.kinau.fishingbot.network.protocol.play.PacketOutTeleportConfirm;
 
 public class Player implements Listener {
@@ -52,13 +50,6 @@ public class Player implements Listener {
 
     @EventHandler
     public void onUpdateXP(UpdateExperienceEvent event) {
-        if(getLevels() >= 0 && getLevels() < event.getLevel()) {
-            if(FishingBot.getInstance().getConfig().getAnnounceTypeConsole() != AnnounceType.NONE)
-                FishingBot.getLog().info("Achieved level " + event.getLevel());
-            if(!FishingBot.getInstance().getConfig().getAnnounceLvlUp().equalsIgnoreCase("false"))
-                FishingBot.getInstance().getNet().sendPacket(new PacketOutChat(FishingBot.getInstance().getConfig().getAnnounceLvlUp().replace("%lvl%", String.valueOf(event.getLevel()))));
-        }
-
         this.levels = event.getLevel();
         this.experience = event.getExperience();
     }

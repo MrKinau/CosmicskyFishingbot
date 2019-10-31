@@ -10,7 +10,10 @@ import systems.kinau.fishingbot.FishingBot;
 import systems.kinau.fishingbot.bot.Player;
 import systems.kinau.fishingbot.event.EventHandler;
 import systems.kinau.fishingbot.event.Listener;
-import systems.kinau.fishingbot.event.play.*;
+import systems.kinau.fishingbot.event.play.DifficultySetEvent;
+import systems.kinau.fishingbot.event.play.DisconnectEvent;
+import systems.kinau.fishingbot.event.play.JoinGameEvent;
+import systems.kinau.fishingbot.event.play.KeepAliveEvent;
 import systems.kinau.fishingbot.network.protocol.NetworkHandler;
 import systems.kinau.fishingbot.network.protocol.play.PacketOutChat;
 import systems.kinau.fishingbot.network.protocol.play.PacketOutClientSettings;
@@ -70,15 +73,6 @@ public class ClientDefaultsModule extends Module implements Listener {
     @EventHandler
     public void onKeepAlive(KeepAliveEvent event) {
         FishingBot.getInstance().getNet().sendPacket(new PacketOutKeepAlive(event.getId()));
-    }
-
-    @EventHandler
-    public void onUpdatePlayerList(UpdatePlayerListEvent event) {
-        if(FishingBot.getInstance().getConfig().isAutoDisconnect() && event.getPlayers().size() > FishingBot.getInstance().getConfig().getAutoDisconnectPlayersThreshold()) {
-            FishingBot.getLog().warning("Max players threshold reached. Stopping");
-            FishingBot.getInstance().setWontConnect(true);
-            FishingBot.getInstance().setRunning(false);
-        }
     }
 
     private void startPositionUpdate(NetworkHandler networkHandler) {

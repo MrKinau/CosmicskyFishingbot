@@ -19,7 +19,6 @@ import systems.kinau.fishingbot.modules.*;
 import systems.kinau.fishingbot.network.ping.ServerPinger;
 import systems.kinau.fishingbot.network.protocol.NetworkHandler;
 import systems.kinau.fishingbot.network.protocol.ProtocolConstants;
-import systems.kinau.fishingbot.realms.RealmsAPI;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,42 +90,6 @@ public class FishingBot {
 
         String ip = getConfig().getServerIP();
         int port = getConfig().getServerPort();
-
-        //Check rather to connect to realm
-        if (getConfig().getRealmId() != -1) {
-            RealmsAPI realmsAPI = new RealmsAPI(getAuthData());
-            if (getConfig().getRealmId() == 0) {
-                realmsAPI.printPossibleWorlds();
-                FishingBot.getLog().info("Shutting down, because realm-id is not set...");
-                System.exit(0);
-            }
-            if (getConfig().isRealmAcceptTos())
-                realmsAPI.agreeTos();
-            else {
-                FishingBot.getLog().severe("*****************************************************************************");
-                FishingBot.getLog().severe("If you want to use realms you have to accept the tos in the config.properties");
-                FishingBot.getLog().severe("*****************************************************************************");
-                System.exit(0);
-            }
-
-            String ipAndPort = null;
-            for (int i = 0; i < 5; i++) {
-                ipAndPort = realmsAPI.getServerIP(getConfig().getRealmId());
-                if (ipAndPort == null) {
-                    FishingBot.getLog().info("Trying to receive IP (Try " + (i + 1) + ")...");
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                } else
-                    break;
-            }
-            if (ipAndPort == null)
-                System.exit(0);
-            ip = ipAndPort.split(":")[0];
-            port = Integer.parseInt(ipAndPort.split(":")[1]);
-        }
 
         //Ping server
         getLog().info("Pinging " + ip + ":" + port + " with protocol of MC-" + getConfig().getDefaultProtocol());

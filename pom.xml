@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>systems.kinau</groupId>
-    <artifactId>FishingBot</artifactId>
+    <artifactId>CosmicskyFishingBot</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>FishingBot</name>
     <description>An AFK fishing bot for minecraft</description>

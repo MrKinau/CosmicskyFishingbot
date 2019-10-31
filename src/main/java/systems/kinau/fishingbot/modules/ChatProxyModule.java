@@ -12,10 +12,12 @@ import systems.kinau.fishingbot.event.play.ChatEvent;
 import systems.kinau.fishingbot.network.protocol.play.PacketOutChat;
 
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class ChatProxyModule extends Module implements Listener {
 
     private Thread chatThread;
+    private Pattern pattern = Pattern.compile("(.*It got away.*)|(.*you caught.*)");
 
     @Override
     public void onEnable() {
@@ -37,7 +39,7 @@ public class ChatProxyModule extends Module implements Listener {
 
     @EventHandler
     public void onChat(ChatEvent event) {
-        if (isEnabled() && !"".equals(event.getText()))
+        if (isEnabled() && !"".equals(event.getText()) /*&& pattern.matcher(event.getText()).matches()*/)
             FishingBot.getLog().info("[CHAT] " + event.getText());
     }
 }
